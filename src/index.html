@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Lettermaatje</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main id="app" class="app" data-state="home">
+    <div class="game-viewport">
+      <div class="book-stage">
+        <img class="book-bg" src="../assets/boekstill.jpg?v=20260608-1" alt="" draggable="false" oncontextmenu="return false">
+
+        <section id="homeScreen" class="screen home-screen">
+          <div id="indexListView" class="student-index-panel index-view">
+            <h1 class="index-title">Inhoud</h1>
+            <div id="studentIndex" class="student-index"></div>
+            <button id="addPlayerButton" class="index-action-button">Speler toevoegen</button>
+          </div>
+
+          <button id="closePlayerPanelButton" class="close-player-button hidden" aria-label="Terug naar index">&times;</button>
+          <div id="playerPanel" class="player-panel index-view hidden"></div>
+          <div id="homeMagicLayer" class="home-magic-layer" aria-hidden="true"></div>
+        </section>
+
+        <section id="readingScreen" class="screen reading-screen hidden">
+          <button id="readingCloseButton" class="reading-close-button reading-close-hidden" aria-label="Terug naar index">&times;</button>
+
+          <div id="pageContentLayer" class="word-page page-content-layer">
+            <div class="image-area">
+              <img id="wordImage" class="word-image hidden" alt="" draggable="false" oncontextmenu="return false">
+            </div>
+            <div class="word-area">
+              <div id="wordText" class="word-text"></div>
+            </div>
+            <div id="magicLayer" class="magic-layer" aria-hidden="true"></div>
+          </div>
+
+          <button id="wordReadButton" class="read-button" aria-label="Woord gelezen"></button>
+        </section>
+
+        <div id="pageTurnLayer" class="page-turn-layer hidden" aria-hidden="true">
+          <video
+            id="pageTurnVideo"
+            src="../assets/boekanimatie.mp4"
+            muted
+            playsinline
+            preload="auto"
+            controlslist="nodownload nofullscreen noremoteplayback"
+            disablepictureinpicture
+            disableremoteplayback
+            draggable="false"
+            x-webkit-airplay="deny"
+            oncontextmenu="return false"
+          ></video>
+        </div>
+
+        <button id="bottleHomeHotspot" class="bottle-home-hotspot hidden" aria-label="Terug naar namen"></button>
+      </div>
+    </div>
+  </main>
+
+  <script src="./data/students.js?v=20260608-2"></script>
+  <script src="./data/words.js?v=20260608-2"></script>
+  <script src="./app.js?v=20260608-2"></script>
+</body>
+</html>
