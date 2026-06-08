@@ -1,3 +1,27 @@
+@font-face {
+  font-family: "Andika";
+  src: url("../assets/fonts/Andika-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Andika";
+  src: url("../assets/fonts/Andika-Bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Andika";
+  src: url("../assets/fonts/Andika-Italic.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
 :root {
   --purple: #6d35ad;
   --purple-dark: #40206f;
@@ -17,7 +41,7 @@ body {
 body {
   overflow: hidden;
   background: #20150f;
-  font-family: Futura, "Futura PT", "Trebuchet MS", Arial, sans-serif;
+  font-family: "Andika", Arial, sans-serif;
 }
 
 button {
