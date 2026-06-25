@@ -16,6 +16,7 @@ const CONTENT_DISSOLVE_MS = 450;
 const DISSOLVE_SPARKLE_MS = 800;
 const WORD_FADE_IN_MS = 800;
 const PAGE_TURN_PLAYBACK_RATE = 1.75;
+const NORMAL_VIDEO_PLAYBACK_RATE = 1;
 const DEFAULT_VIDEO_FALLBACK_MS = 7000;
 const VIDEO_FALLBACK_PADDING_MS = 1200;
 const SPARKLE_COLORS = ["#fffdf2", "#ffd96d", "#fff0a6", "#ffd6e7"];
@@ -37,7 +38,6 @@ const readingCloseButton = document.getElementById("readingCloseButton");
 const wordText = document.getElementById("wordText");
 const wordImage = document.getElementById("wordImage");
 const magicLayer = document.getElementById("magicLayer");
-const pageContentLayer = document.getElementById("pageContentLayer");
 const wordReadButton = document.getElementById("wordReadButton");
 const bottleHomeHotspot = document.getElementById("bottleHomeHotspot");
 const pageTurnLayer = document.getElementById("pageTurnLayer");
@@ -71,6 +71,20 @@ function setInteractionLocked(isLocked) {
   studentIndex.querySelectorAll("button").forEach(button => {
     button.disabled = isLocked;
   });
+}
+
+function resetPageTurnVideoRate() {
+  if (!pageTurnVideo) return;
+  pageTurnVideo.defaultPlaybackRate = NORMAL_VIDEO_PLAYBACK_RATE;
+  pageTurnVideo.playbackRate = NORMAL_VIDEO_PLAYBACK_RATE;
+}
+
+function cleanupPageTurnVideo() {
+  if (!pageTurnVideo) return;
+  pageTurnVideo.pause();
+  resetPageTurnVideoRate();
+  pageTurnVideo.currentTime = 0;
+  pageTurnLayer.classList.add("hidden");
 }
 
 async function hideReadButton() {
@@ -412,9 +426,7 @@ function resetWordImage() {
 function showHome() {
   flowId += 1;
   if (finishActiveVideo) finishActiveVideo();
-  pageTurnVideo.pause();
-  pageTurnVideo.currentTime = 0;
-  pageTurnLayer.classList.add("hidden");
+  cleanupPageTurnVideo();
   clearMagicEffects();
   homeMagicLayer.replaceChildren();
   resetPageContentLayer();
@@ -611,8 +623,7 @@ async function returnToActivePlayerLetters() {
   hideReadingCloseButton();
 
   if (finishActiveVideo) finishActiveVideo();
-  pageTurnVideo.pause();
-  pageTurnLayer.classList.add("hidden");
+  cleanupPageTurnVideo();
 
   const visibleTargets = [wordText];
   if (!wordImage.classList.contains("hidden")) visibleTargets.push(wordImage);
@@ -663,36 +674,45 @@ async function transitionToNextWord(thisFlow) {
 
 function playPageTurnVideo(turnState) {
   return new Promise(resolve => {
-    setState(turnState);
-    setInteractionLocked(true);
-    hideReadingCloseButton();
-    pageTurnLayer.classList.remove("hidden");
-    pageTurnVideo.currentTime = 0;
-    pageTurnVideo.playbackRate = PAGE_TURN_PLAYBACK_RATE;
-
+    const video = pageTurnVideo;
+    let fallbackTimer = null;
     let finished = false;
+
     const finish = () => {
       if (finished) return;
       finished = true;
-      window.clearTimeout(fallbackTimer);
-      pageTurnVideo.removeEventListener("ended", finish);
-      pageTurnVideo.pause();
+      if (fallbackTimer) window.clearTimeout(fallbackTimer);
+      video.removeEventListener("ended", finish);
+      video.pause();
+      resetPageTurnVideoRate();
       pageTurnLayer.classList.add("hidden");
       finishActiveVideo = null;
       resolve();
     };
+
+    setState(turnState);
+    setInteractionLocked(true);
+    hideReadingCloseButton();
+    pageTurnLayer.classList.remove("hidden");
+    video.pause();
+    resetPageTurnVideoRate();
+    video.currentTime = 0;
+    video.defaultPlaybackRate = NORMAL_VIDEO_PLAYBACK_RATE;
+    video.playbackRate = PAGE_TURN_PLAYBACK_RATE;
     finishActiveVideo = finish;
 
-    const durationMs = Number.isFinite(pageTurnVideo.duration)
-      ? pageTurnVideo.duration * 1000 / PAGE_TURN_PLAYBACK_RATE
+    const durationMs = Number.isFinite(video.duration) && video.duration > 0
+      ? video.duration * 1000 / PAGE_TURN_PLAYBACK_RATE
       : DEFAULT_VIDEO_FALLBACK_MS;
-    const fallbackTimer = window.setTimeout(finish, durationMs + VIDEO_FALLBACK_PADDING_MS);
-    pageTurnVideo.addEventListener("ended", finish, { once: true });
+    fallbackTimer = window.setTimeout(finish, durationMs + VIDEO_FALLBACK_PADDING_MS);
+    video.addEventListener("ended", finish, { once: true });
 
     try {
-      const playAttempt = pageTurnVideo.play();
+      const playAttempt = video.play();
       if (playAttempt && typeof playAttempt.catch === "function") {
-        playAttempt.catch(() => {});
+        playAttempt.catch(() => {
+          // The fallback timer keeps the game moving when Safari blocks play().
+        });
       }
     } catch (error) {
       // The fallback timer keeps the game moving.
@@ -707,5 +727,6 @@ addPlayerButton.addEventListener("click", openAddPlayer);
 closePlayerPanelButton.addEventListener("click", showIndexList);
 
 renderStudents();
+resetPageTurnVideoRate();
 pageTurnVideo.load();
 showHome();
