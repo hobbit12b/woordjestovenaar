@@ -2,7 +2,7 @@ const OFFERED_LETTERS_2025_2026 = ["w", "r", "t", "p", "a", "s", "g", "h", "k", 
 
 try {
   const versionKey = "woordjestovenaar.contentVersion";
-  const version = "2025-2026-empty-start";
+  const version = "2025-2026-empty-start-with-offered-item";
   if (localStorage.getItem(versionKey) !== version) {
     localStorage.setItem("woordjestovenaar.players", "[]");
     localStorage.setItem("woordjestovenaar.deletedPlayers", "[]");
@@ -12,4 +12,10 @@ try {
   // Opslag is niet noodzakelijk om de basis te gebruiken.
 }
 
-const STUDENTS = [];
+const STUDENTS = [
+  {
+    id: "aangeboden-2025-2026",
+    name: "aangeboden in 2025-2026",
+    knownLetters: OFFERED_LETTERS_2025_2026
+  }
+];
