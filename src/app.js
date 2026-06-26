@@ -23,6 +23,9 @@ const SPARKLE_COLORS = ["#fffdf2", "#ffd96d", "#fff0a6", "#ffd6e7"];
 const PLAYER_STORAGE_KEY = "woordjestovenaar.players";
 const DELETED_PLAYER_STORAGE_KEY = "woordjestovenaar.deletedPlayers";
 const ALPHABET = "abcdefghijklmnopqrstuvwxyz".split("");
+const OFFERED_LETTERS = typeof OFFERED_LETTERS_2025_2026 !== "undefined"
+  ? OFFERED_LETTERS_2025_2026
+  : ["w", "r", "t", "p", "a", "s", "g", "h", "k", "l", "z", "v", "b", "n", "m"];
 const UI_TRANSITION_MS = 550;
 
 const app = document.getElementById("app");
@@ -243,6 +246,20 @@ function renderStudents() {
   players.forEach(student => {
     const button = document.createElement("button");
     button.className = "student-button";
+
+    if (student.id === "aangeboden-2025-2026") {
+      button.type = "button";
+      button.disabled = true;
+      button.classList.add("student-button-info");
+      button.innerHTML = `
+        <span>aangeboden in 2025-2026</span>
+        <small>${OFFERED_LETTERS.join(" ")}</small>
+      `;
+      studentIndex.appendChild(button);
+      return;
+    }
+
+    button.type = "button";
     button.textContent = student.name;
     button.addEventListener("click", () => openPlayerLetters(student));
     studentIndex.appendChild(button);
@@ -319,7 +336,7 @@ function renderPlayerPanel(player, isNew) {
   if (isNew) {
     nameInput = document.createElement("input");
     nameInput.className = "player-name-input";
-    nameInput.placeholder = "Naam";
+    nameInput.placeholder = "Typ de naam met een echt toetsenbord.";
     nameInput.autocomplete = "off";
   }
 
@@ -333,9 +350,14 @@ function renderPlayerPanel(player, isNew) {
   });
 
   playerPanel.appendChild(title);
-  if (nameInput) playerPanel.appendChild(nameInput);
-  playerPanel.appendChild(grid);
+if (nameInput) playerPanel.appendChild(nameInput);
 
+const letterPrompt = document.createElement("p");
+letterPrompt.className = "player-message letter-prompt";
+letterPrompt.textContent = "Met welke letters moeten woordjes worden gemaakt?";
+playerPanel.appendChild(letterPrompt);
+
+playerPanel.appendChild(grid);
   if (isNew) {
     playerPanel.appendChild(createPanelButton("Opslaan", async () => {
       const name = nameInput.value.trim();
@@ -396,7 +418,7 @@ async function openAddPlayer() {
   if (uiTransitioning) return;
   selectedPlayer = null;
   uiMode = "addPlayer";
-  renderPlayerPanel({ knownLetters: [] }, true);
+  renderPlayerPanel({ knownLetters: [...OFFERED_LETTERS] }, true);
   closePlayerPanelButton.classList.remove("hidden");
   await transitionIndexView(indexListView, playerPanel);
   playerPanel.querySelector(".player-name-input")?.focus();
