@@ -247,17 +247,16 @@ function renderStudents() {
     const button = document.createElement("button");
     button.className = "student-button";
 
-    if (student.id === "aangeboden-2025-2026") {
-      button.type = "button";
-      button.disabled = true;
-      button.classList.add("student-button-info");
-      button.innerHTML = `
-        <span>aangeboden in 2025-2026</span>
-        <small>${OFFERED_LETTERS.join(" ")}</small>
-      `;
-      studentIndex.appendChild(button);
-      return;
-    }
+   if (student.id === "aangeboden-2025-2026") {
+  const info = document.createElement("div");
+  info.className = "offered-letters-note";
+  info.innerHTML = `
+    <span>Aangeboden letters 2025-2026</span>
+    <small>${OFFERED_LETTERS.join(" ")}</small>
+  `;
+  studentIndex.appendChild(info);
+  return;
+}
 
     button.type = "button";
     button.textContent = student.name;
