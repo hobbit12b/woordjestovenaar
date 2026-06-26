@@ -23,3 +23,4 @@ Open `src/index.html` in de browser.
 5. Magische plaatjesreveal
 6. Echte assets
 7. iPad-polish
+Deploy refresh 26-06-2026
