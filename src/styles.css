@@ -638,3 +638,33 @@ video,
   .student-button,
   .read-button { border-width: 1px; }
 }
+
+.offered-letters-note {
+  width: min(86%, 18rem);
+  margin: 0.2rem auto 1rem;
+  padding: 0;
+  text-align: center;
+  color: #4a2a14;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: normal;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.offered-letters-note span {
+  display: block;
+  font-size: clamp(0.95rem, 1.9vw, 1.15rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.offered-letters-note small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+  font-style: italic;
+  letter-spacing: 0.12em;
+  line-height: 1.5;
+  color: rgba(74, 42, 20, 0.82);
+}
