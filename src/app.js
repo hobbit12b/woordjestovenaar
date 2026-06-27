@@ -303,9 +303,13 @@ function setSelectedLetters(letters) {
 }
 function createPanelButton(text, onClick) {
   const button = document.createElement("button");
+  button.type = "button";
   button.className = "player-action-button";
   button.textContent = text;
-  button.addEventListener("click", onClick);
+  button.addEventListener("click", event => {
+    event.preventDefault();
+    onClick(event);
+  });
   return button;
 }
 
@@ -370,22 +374,31 @@ playerPanel.appendChild(letterTools);
 playerPanel.appendChild(grid);
   if (isNew) {
     playerPanel.appendChild(createPanelButton("Opslaan", async () => {
-      const name = nameInput.value.trim();
-      if (!name) {
-        message.textContent = "Vul een naam in.";
-        return;
-      }
+  const name = nameInput.value.trim();
+  const knownLetters = getSelectedLetters();
 
-      const newPlayer = {
-        id: `player-${Date.now()}`,
-        name,
-        knownLetters: getSelectedLetters()
-      };
-      players.push(newPlayer);
-      savePlayers();
-      renderStudents();
-      await showIndexList();
-    }));
+  if (!name) {
+    message.textContent = "Vul een naam in.";
+    return;
+  }
+
+  if (!knownLetters.length) {
+    message.textContent = "Kies minimaal één letter.";
+    return;
+  }
+
+  const newPlayer = {
+    id: `player-${Date.now()}`,
+    name,
+    knownLetters
+  };
+
+  players = players.filter(player => player.id !== "aangeboden-2025-2026");
+  players.push(newPlayer);
+  savePlayers(players);
+  renderStudents();
+  await showIndexList();
+}));
   } else {
     playerPanel.appendChild(createPanelButton("Woordjes oefenen", () => startReadingFromPlayerPanel(player, message)));
     const deleteButton = createPanelButton("Speler verwijderen", () => deletePlayer(player));
