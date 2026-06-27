@@ -248,13 +248,6 @@ function renderStudents() {
     button.className = "student-button";
 
    if (student.id === "aangeboden-2025-2026") {
-  const info = document.createElement("div");
-  info.className = "offered-letters-note";
-  info.innerHTML = `
-    <span>Aangeboden letters 2025-2026</span>
-    <small>${OFFERED_LETTERS.join(" ")}</small>
-  `;
-  studentIndex.appendChild(info);
   return;
 }
 
@@ -302,10 +295,12 @@ function createLetterGrid(knownLetters, onChange) {
   return grid;
 }
 
-function getSelectedLetters() {
-  return [...playerPanel.querySelectorAll(".letter-choice input:checked")].map(input => input.value);
+function setSelectedLetters(letters) {
+  const selectedLetters = new Set(letters);
+  playerPanel.querySelectorAll(".letter-choice input").forEach(input => {
+    input.checked = selectedLetters.has(input.value);
+  });
 }
-
 function createPanelButton(text, onClick) {
   const button = document.createElement("button");
   button.className = "player-action-button";
@@ -335,7 +330,7 @@ function renderPlayerPanel(player, isNew) {
   if (isNew) {
     nameInput = document.createElement("input");
     nameInput.className = "player-name-input";
-    nameInput.placeholder = "Typ de naam met een echt toetsenbord.";
+    nameInput.placeholder = "Typ naam met 'n echt toetsenbord";
     nameInput.autocomplete = "off";
   }
 
@@ -353,9 +348,25 @@ if (nameInput) playerPanel.appendChild(nameInput);
 
 const letterPrompt = document.createElement("p");
 letterPrompt.className = "player-message letter-prompt";
-letterPrompt.textContent = "Met welke letters moeten woordjes worden gemaakt?";
+letterPrompt.textContent = "Kies de letters voor de woordjes";
 playerPanel.appendChild(letterPrompt);
 
+const letterTools = document.createElement("div");
+letterTools.className = "letter-tools";
+
+const updateLetterSelection = letters => {
+  setSelectedLetters(letters);
+  if (!isNew) {
+    player.knownLetters = getSelectedLetters();
+    savePlayers();
+  }
+};
+
+letterTools.appendChild(createPanelButton("Alles", () => updateLetterSelection(ALPHABET)));
+letterTools.appendChild(createPanelButton("Niets", () => updateLetterSelection([])));
+letterTools.appendChild(createPanelButton("Aangeboden", () => updateLetterSelection(OFFERED_LETTERS)));
+
+playerPanel.appendChild(letterTools);
 playerPanel.appendChild(grid);
   if (isNew) {
     playerPanel.appendChild(createPanelButton("Opslaan", async () => {
@@ -751,3 +762,4 @@ renderStudents();
 resetPageTurnVideoRate();
 pageTurnVideo.load();
 showHome();
+
