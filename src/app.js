@@ -363,7 +363,7 @@ if (nameInput) playerPanel.appendChild(nameInput);
 
 const letterPrompt = document.createElement("p");
 letterPrompt.className = "player-message letter-prompt";
-letterPrompt.textContent = "Kies de letters voor de woordjes";
+letterPrompt.textContent = "Kies de letters die je kent:";
 playerPanel.appendChild(letterPrompt);
 
 const letterTools = document.createElement("div");
