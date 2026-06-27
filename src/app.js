@@ -301,6 +301,17 @@ function setSelectedLetters(letters) {
     input.checked = selectedLetters.has(input.value);
   });
 }
+function getSelectedLetters() {
+  return [...playerPanel.querySelectorAll(".letter-choice input:checked")]
+    .map(input => input.value);
+}
+
+function setSelectedLetters(letters) {
+  const selectedLetters = new Set(letters);
+  playerPanel.querySelectorAll(".letter-choice input").forEach(input => {
+    input.checked = selectedLetters.has(input.value);
+  });
+}
 function createPanelButton(text, onClick) {
   const button = document.createElement("button");
   button.type = "button";
