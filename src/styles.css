@@ -668,3 +668,18 @@ video,
   line-height: 1.5;
   color: rgba(74, 42, 20, 0.82);
 }
+
+.letter-tools {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: center;
+  margin: 0.35rem 0 0.55rem;
+}
+
+.letter-tools .player-action-button {
+  width: auto;
+  min-width: 5.2rem;
+  padding: 0.45rem 0.6rem;
+  font-size: clamp(0.72rem, 1.25vw, 0.86rem);
+  border-radius: 0.55rem;
+}
